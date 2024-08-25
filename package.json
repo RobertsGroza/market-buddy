@@ -1,0 +1,16 @@
+{
+  "name": "marketplace-observer",
+  "version": "1.0.0",
+  "description": "App that checks most popular marketplace sites & sends emails when there are new items that satisfies set filters",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ."
+  },
+  "keywords": [],
+  "author": "Roberts Groza",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  }
+}
