@@ -1,5 +1,5 @@
 {
-  "name": "marketplace-observer",
+  "name": "market-buddy",
   "version": "1.0.0",
   "description": "App that checks most popular marketplace sites & sends emails when there are new items that satisfies set filters",
   "main": "index.ts",
