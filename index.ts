@@ -1,28 +1,30 @@
-import axios from "axios";
-import type { AxiosResponse, AxiosError } from "axios";
-import { XMLParser } from "fast-xml-parser";
+import { config } from "./config";
+import { sendMail } from "./helpers/mailer";
+import { DB } from "./helpers/db";
+import { processFilter } from "./helpers/ssFilter";
+import { ProcessedFilterResult } from "./types";
 
-import { sendMail } from './helpers/mailer';
-import { checkEntries, createDatabase, updateLastRecord } from "./helpers/db";
-import type { SSResponse } from './types';
 
-const SEND_MAIL = false;
-const parser = new XMLParser();
+async function main() {
+    const db = new DB();
+    const filters = await db.getFilters();
 
-axios.get(`https://www.ss.lv/lv/transport/cars/volkswagen/golf-7/rss/`)
-    .then((response: AxiosResponse<string>) => {
-        const data = response.data;
-        const result: SSResponse = parser.parse(data);
-        const items = result.rss.channel.item;
+    for (const filter of filters) {
+        const result =
+            filter.type === "ss"
+                ? await processFilter(filter)
+                : ({} as ProcessedFilterResult); // TODO: Add City24 filter
 
-        if (SEND_MAIL) {
-            sendMail("Market Buddy", "This is a test email");
+        if (result.lastBuildTimestamp) {
+            db.updateLastEntry(filter.id, result.lastBuildTimestamp);
         }
 
-        const firstItem = items[0];
-        const id = firstItem.link.split("/").at(-1)?.split(".")[0];
-        const timestamp = new Date(firstItem.pubDate).getTime();
-        updateLastRecord(id ?? "", timestamp);
-    })
-    .catch((err: AxiosError) => console.error(err));
- 
+        if (config.sendMail) {
+            sendMail("Market Buddy", "This is a test email");
+        }
+    }
+
+    db.close();
+}
+
+main();

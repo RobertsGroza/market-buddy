@@ -1,5 +1,4 @@
 import { createTransport } from "nodemailer";
-
 import "dotenv/config";
 
 const transporter = createTransport({
