@@ -1,12 +1,13 @@
 TODO:
 
 - [x] SS.COM RSS client
-- [ ] Filter for SS
-- [ ] Logic for filtering out duplicates
+- [x] Filter for SS
+- [x] Logic for filtering out duplicates
 - [x] Email service that sends out results
-- [ ] Format email & make it cool
+- [x] Way to remember last sent advertisement (maybe SQLite)
+- [x] Think of way how to store filters & apply them
+- [x] Format email & make it cool (Add some images as well)
+- [x] Add custom filters (by price, engine, etc)
 - [ ] CRON job
 - [ ] CITY24 client
-- [x] Way to remember last sent advertisement (maybe SQLite)
-- [ ] Think of way how to store filters & apply them
-- [ ] Some sort of user interface?
+- [ ] User interface with API

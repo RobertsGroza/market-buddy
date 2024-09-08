@@ -70,14 +70,23 @@ export class DB {
                     url TEXT NOT NULL,
                     type TEXT CHECK(type IN ('ss','city24')) NOT NULL DEFAULT "ss",
                     last_build_timestamp INTEGER,
-                    email TEXT
+                    email TEXT,
+                    filter TEXT
                 );
 
-                INSERT INTO filters (name, url, email)
+                INSERT INTO filters (name, url, email, filter)
                 VALUES (
                     "GOLF 7",
                     "https://www.ss.lv/lv/transport/cars/volkswagen/golf-7/rss/",
-                    "${process.env.my_email}"
+                    "${process.env.my_email}",
+                    '{"engine": "petrol"}'
+                );
+                INSERT INTO filters (name, url, email, filter)
+                VALUES (
+                    "GOLF 6",
+                    "https://www.ss.lv/lv/transport/cars/volkswagen/golf-6/rss/",
+                    "${process.env.my_email}",
+                    '{"engine": "petrol", "maxPrice": 7000}'
                 );
             `,
                 (err) => {

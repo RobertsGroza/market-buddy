@@ -19,7 +19,10 @@ export interface ResultItem {
     description: string;
     link: string;
     timestamp: number;
+    parsedDescription: {[key: string]: string}; // parsedDescription is used for filtering
 }
+
+export type FilterType = "ss" | "city24";
 
 export interface FilterRecord {
     id: number;
@@ -27,7 +30,13 @@ export interface FilterRecord {
     name: string;
     email: string;
     last_build_timestamp: number;
-    type: "ss" | "city24";
+    type: FilterType;
+    filter: string;
+}
+
+export interface CustomFilterObject {
+    engine: "petrol" | "diesel" | "hybrid";
+    maxPrice: number;
 }
 
 export interface Filter extends Omit<FilterRecord, "last_build_timestamp"> {
@@ -37,4 +46,9 @@ export interface Filter extends Omit<FilterRecord, "last_build_timestamp"> {
 export interface ProcessedFilterResult {
     results: ResultItem[];
     lastBuildTimestamp?: number;
+}
+
+export interface GroupedResult {
+    filter: Filter;
+    results: ResultItem[];
 }
