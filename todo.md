@@ -8,6 +8,8 @@ TODO:
 - [x] Think of way how to store filters & apply them
 - [x] Format email & make it cool (Add some images as well)
 - [x] Add custom filters (by price, engine, etc)
-- [ ] CRON job
+- [x] CRON job
+- [ ] Dockerize
+- [ ] Deploy on some instance so its running in background
 - [ ] CITY24 client
 - [ ] User interface with API

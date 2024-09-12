@@ -1,3 +1,5 @@
+import cron from "node-cron";
+
 import { composeAndSendEmail } from "./helpers/mailer";
 import { DB } from "./helpers/db";
 import { processFilter } from "./helpers/ssFilter";
@@ -28,4 +30,5 @@ async function main() {
     db.close();
 }
 
-main();
+// Run every minute
+cron.schedule("*/1 * * * *", () => main());

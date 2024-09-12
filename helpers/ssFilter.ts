@@ -21,7 +21,10 @@ export async function processFilter(
         const parsedData: SSResponse = parser.parse(response.data);
 
         return {
-            results: applySSFilters(processSSItems(parsedData.rss.channel.item, filter), filter),
+            results: applySSFilters(
+                processSSItems(parsedData.rss.channel.item, filter),
+                filter,
+            ),
             lastBuildTimestamp: new Date(
                 parsedData.rss.channel.lastBuildDate,
             ).getTime(),
@@ -36,12 +39,14 @@ export async function processFilter(
 }
 
 export function processSSItems(items: SSItem[], filter: Filter): ResultItem[] {
-    const newItems = config.filterByTime && filter.lastBuildTimestamp
-        ? items.filter(
-              (item) =>
-                  new Date(item.pubDate).getTime() > filter.lastBuildTimestamp,
-          )
-        : items;
+    const newItems =
+        config.filterByTime && filter.lastBuildTimestamp
+            ? items.filter(
+                  (item) =>
+                      new Date(item.pubDate).getTime() >
+                      filter.lastBuildTimestamp,
+              )
+            : items;
 
     return newItems.map((item) => {
         return {
@@ -57,21 +62,28 @@ export function processSSItems(items: SSItem[], filter: Filter): ResultItem[] {
 function applySSFilters(items: ResultItem[], filter: Filter): ResultItem[] {
     const customFilter: CustomFilterObject = JSON.parse(filter.filter);
 
-    return items.filter(item => {
+    return items.filter((item) => {
         for (const [filterKey, filterValue] of Object.entries(customFilter)) {
-            const isDiesel = item.parsedDescription["Tilp."].match(/d|D/g);
-            if (filterKey === "engine" && filterValue === "petrol" && isDiesel) {
+            const itemPrice = parseInt(
+                (item.parsedDescription["Cena"] ?? "").replace(",", "").match(/\d+/g)?.[0] ?? "0",
+                10,
+            );
+            const isDiesel = (item.parsedDescription["Tilp."] ?? "").match(/d|D/g,);
+
+            if (!itemPrice || (filterKey === "maxPrice" && itemPrice > filterValue)) {
                 return false;
             }
-
-            const itemPrice = parseInt(item.parsedDescription["Cena"].replace(",", "").match(/\d+/g)?.[0] ?? "0", 10)
-            if (filterKey === "maxPrice" && itemPrice > filterValue) {
+            if (
+                filterKey === "engine" &&
+                filterValue === "petrol" &&
+                isDiesel
+            ) {
                 return false;
             }
         }
 
         return true;
-    })
+    });
 }
 
 /**
@@ -79,11 +91,12 @@ function applySSFilters(items: ResultItem[], filter: Filter): ResultItem[] {
  * @param item Item with description
  * @returns object containing values (e.g. {cena: "3,000 EUR"})
  */
-function parseDescription(item: SSItem): {[key: string]: string}
- {
-    const result: {[key: string]: string} = {};
-    const descriptionParameters = item.description.match(/(\w|[.])+: <b>([^//])+/g) ?? [];
-    const keyValuePairs = descriptionParameters.map(el => el.replace(/<b>|</g, "").split(": "));
+function parseDescription(item: SSItem): { [key: string]: string } {
+    const descriptionParameters =
+        item.description.match(/(\w|[.])+: <b>([^//])+/g) ?? [];
+    const keyValuePairs = descriptionParameters.map((el) =>
+        el.replace(/<b>|</g, "").split(": "),
+    );
 
     return Object.fromEntries(keyValuePairs);
 }
